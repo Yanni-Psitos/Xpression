@@ -1,35 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="ypsitos.xpression.MainActivity">
-
-    <TextView
-        android:paddingLeft="60dp"
-        android:layout_alignParentTop="true"
-        android:layout_width="wrap_content"
+    android:orientation="vertical"
+    android:padding="10dp"
+    >
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Hello, and wlecome to Xpression!"
-        android:id="@+id/welcomeTv"/>
-    <TextView
-        android:paddingLeft="60dp"
-        android:layout_width="wrap_content"
+        android:gravity="center"
+        android:padding="5dp">
+    <Button
+        android:id="@+id/btnSelectPhoto"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="To begin, make sure you brought a screenshot of a text with you!"
-        android:layout_below="@+id/welcomeTv"
-        android:layout_alignParentStart="true"
-        android:id="@+id/welcomeTv2"/>
-
-
+        android:text="Select A Photo!"/>
+        </LinearLayout>
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="10dp">
     <ImageView
+        android:id="@+id/ivImage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/welcomeTv2"
-        android:id="@+id/imageView" />
+        android:src="#000000"/>
 
-</RelativeLayout>
+</LinearLayout>
+
+</LinearLayout>
