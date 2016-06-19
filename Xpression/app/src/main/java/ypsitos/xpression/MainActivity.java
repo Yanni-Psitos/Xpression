@@ -124,7 +124,6 @@ public class MainActivity extends AppCompatActivity {
             int column_index = cursor
                     .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
             cursor.moveToFirst();
-            Log.v("Grabbed URI?", "Chyeah bruh.");
             return cursor.getString(column_index);
         }
         // this is our fallback here
