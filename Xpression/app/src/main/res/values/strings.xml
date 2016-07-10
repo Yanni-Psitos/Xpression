@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">XPRESSION</string>
+    <string name="title_activity_analysis">AnalysisActivity</string>
+    <string name="loading_message">Loading Image...</string>
 </resources>
