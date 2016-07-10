@@ -22,6 +22,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,6 +41,7 @@ import com.google.api.services.vision.v1.model.Feature;
 import com.google.api.services.vision.v1.model.Image;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -56,9 +58,10 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String CLOUD_VISION_API_KEY = "88db5b67dfbf8bc89b3f3e1351a78d31d7df7766";
     public static final String FILE_NAME = "temporary.jpg";
-
-    private String selectedImagePath;
+    
     private TextView mLoadingImage;
+    private ImageView mMainImage;
+
 
 
     @Override
@@ -67,6 +70,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mLoadingImage = (TextView)findViewById(R.id.loadingTv);
+        mMainImage = (ImageView) findViewById(R.id.ivImage);
+
 
         mSelectButton = (Button) findViewById(R.id.btnSelectPhoto);
         mSelectButton.setOnClickListener(new View.OnClickListener() {
@@ -135,8 +140,11 @@ public class MainActivity extends AppCompatActivity {
         if (resultCode == RESULT_OK) {
             if (requestCode == SELECT_PICTURE) {
                 Uri selectedImageUri = data.getData(); //Puts the path of the URI, from the data, into selectedImageUri to transfer it below into a string.
-                selectedImagePath = getPath(selectedImageUri);
-                uploadImage(data.getData());
+                try {
+                    uploadImage(data.getData());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 //                Intent toAnalysisActivity = new Intent(MainActivity.this, AnalysisActivity.class);
 //                toAnalysisActivity.putExtra("image", selectedImagePath);
 //                startActivity(toAnalysisActivity);
@@ -164,19 +172,17 @@ public class MainActivity extends AppCompatActivity {
         return uri.getPath();
     }
 
-    public void uploadImage(Uri uri) { //Method to upload an image to Cloud Vision, by first turning the path clicked on by the gallery picker into a bitmap (which is the proper format required by GCV).
+    public void uploadImage(Uri uri) throws IOException { //Method to upload an image to Cloud Vision, by first turning the path clicked on by the gallery picker into a bitmap (which is the proper format required by GCV).
 
         if (uri != null) { //If there IS a URI, proceed.
-            File sd = Environment.getExternalStorageDirectory(); //Grabs an external directory and assigns it.
-            File image = new File(sd + selectedImagePath,"Image Name?"); //Creates a new file with the image path string and the external directory. //Todo - Find the string that should replace the current.
-            BitmapFactory.Options bmOptions = new BitmapFactory.Options(); //
-            Bitmap bitmap = BitmapFactory.decodeFile(image.getAbsolutePath(),bmOptions);
-            bitmap = Bitmap.createScaledBitmap(bitmap,bitmap.getWidth(),bitmap.getHeight(),true);
-
-
+            Bitmap bitmap =
+                    scaleBitmapDown(
+                            MediaStore.Images.Media.getBitmap(getContentResolver(), uri),
+                            1200);
             try {
 
                 callCloudVision(bitmap);
+                mMainImage.setImageBitmap(bitmap);
 
             } catch(IOException e){
                 Log.d("Tagged","Image Uploading has failed.");
