@@ -136,6 +136,7 @@ public class MainActivity extends AppCompatActivity {
             if (requestCode == SELECT_PICTURE) {
                 Uri selectedImageUri = data.getData(); //Puts the path of the URI, from the data, into selectedImageUri to transfer it below into a string.
                 selectedImagePath = getPath(selectedImageUri);
+                uploadImage(data.getData());
 //                Intent toAnalysisActivity = new Intent(MainActivity.this, AnalysisActivity.class);
 //                toAnalysisActivity.putExtra("image", selectedImagePath);
 //                startActivity(toAnalysisActivity);
