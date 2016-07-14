@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 1; //Request int for camera & external storage permissions.
     private static final int SELECT_PICTURE = 2; //Request int for gallery browser.
 
-    private static final String CLOUD_VISION_API_KEY = "88db5b67dfbf8bc89b3f3e1351a78d31d7df7766";
+    private static final String CLOUD_VISION_API_KEY = "AIzaSyDLSL3CV9iHsMqHmKXb391xLK7E0rHQLEo";
     public static final String FILE_NAME = "temporary.jpg";
 
     private TextView mLoadingImage;
