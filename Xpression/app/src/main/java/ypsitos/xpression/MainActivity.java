@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String CLOUD_VISION_API_KEY = "88db5b67dfbf8bc89b3f3e1351a78d31d7df7766";
     public static final String FILE_NAME = "temporary.jpg";
-    
+
     private TextView mLoadingImage;
     private ImageView mMainImage;
 
@@ -139,12 +139,7 @@ public class MainActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {    //Called when the activity is started for the result and receives the picture selection (or not).
         if (resultCode == RESULT_OK) {
             if (requestCode == SELECT_PICTURE) {
-                Uri selectedImageUri = data.getData(); //Puts the path of the URI, from the data, into selectedImageUri to transfer it below into a string.
-                try {
-                    uploadImage(data.getData());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                    uploadImage(data.getData());//Puts the path of the URI, from the data, into selectedImageUri to transfer it below into a string.
 //                Intent toAnalysisActivity = new Intent(MainActivity.this, AnalysisActivity.class);
 //                toAnalysisActivity.putExtra("image", selectedImagePath);
 //                startActivity(toAnalysisActivity);
@@ -172,17 +167,17 @@ public class MainActivity extends AppCompatActivity {
         return uri.getPath();
     }
 
-    public void uploadImage(Uri uri) throws IOException { //Method to upload an image to Cloud Vision, by first turning the path clicked on by the gallery picker into a bitmap (which is the proper format required by GCV).
-
+    public void uploadImage(Uri uri) { //Method to upload an image to Cloud Vision, by first turning the path clicked on by the gallery picker into a bitmap (which is the proper format required by GCV).
+    Log.d("LogDan","Uri " + uri.toString());
         if (uri != null) { //If there IS a URI, proceed.
+            try {
             Bitmap bitmap =
                     scaleBitmapDown(
                             MediaStore.Images.Media.getBitmap(getContentResolver(), uri),
                             1200);
-            try {
-
-                callCloudVision(bitmap);
                 mMainImage.setImageBitmap(bitmap);
+                callCloudVision(bitmap);
+
 
             } catch(IOException e){
                 Log.d("Tagged","Image Uploading has failed.");
