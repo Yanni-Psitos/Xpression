@@ -43,18 +43,20 @@ import com.google.api.services.vision.v1.model.Image;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
 import java.io.ByteArrayOutputStream;
-
+import java.util.Random;
 
 
 public class MainActivity extends AppCompatActivity {
 
     public static Button mSelectButton;
     private static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 1; //Request int for camera & external storage permissions.
-    private static final int SELECT_PICTURE = 2; //Request int for gallery browser.
+    private static final int SELECT_PICTURE = 2;//Request int for gallery browser.
+    private static final int REQUEST_IMAGE_CAPTURE = 3;
 
     private static final String CLOUD_VISION_API_KEY = "AIzaSyDLSL3CV9iHsMqHmKXb391xLK7E0rHQLEo";
     public static final String FILE_NAME = "temporary.jpg";
@@ -62,12 +64,21 @@ public class MainActivity extends AppCompatActivity {
     private TextView mLoadingImage;
     private ImageView mMainImage;
 
+    private int points = 0;
+    private ArrayList<String> scavList;
+    private String[] randomScavList= {"n/a","n/a","n/a","n/a","n/a","n/a","n/a","n/a","n/a","n/a"};
+
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        scavList.add(new String{"toilet", "coffee cup", "hair", "t-shirt", "hand", "pc game", "bottle"};
+        getRandom(scavList);
+
 
         mLoadingImage = (TextView)findViewById(R.id.loadingTv);
         mMainImage = (ImageView) findViewById(R.id.ivImage);
@@ -80,12 +91,14 @@ public class MainActivity extends AppCompatActivity {
                 selectImage();
             }
         });
+
+
     }
 
     public void selectImage() { //Method that encapsulates the image selection process within a dialog click.
         final CharSequence[] items = {"Take Photo", "Choose From Library", "Cancel"}; //Dialog item names.
         final AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-        builder.setTitle("Add Photo"); //Title for the dialog appears as such.
+        builder.setTitle("Pick A Method!"); //Title for the dialog appears as such.
         builder.setItems(items, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int item) { //On click, results in cycling through possible permission requests, and ends in granting permissions to both the Camera and External Storage.
@@ -96,13 +109,20 @@ public class MainActivity extends AppCompatActivity {
                         != PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(MainActivity.this, "Please allow XPRESSION to access your photos! (:", Toast.LENGTH_SHORT).show();
                     ActivityCompat.requestPermissions(MainActivity.this, new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE, android.Manifest.permission.CAMERA}, MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
-                } else {
-                    Log.v("Accessed permissions?", "Yes, and allowed.");
+                } else if(item == 1) {
+                    Log.v("1 Accessed permissions?", "Yes, and allowed.");
                     Intent intent = new Intent();   //Creates gallery browser intent.
                     intent.setType("image/*");
                     intent.setAction(Intent.ACTION_GET_CONTENT);
                     startActivityForResult(Intent.createChooser(intent, //Begins gallery browser intent for a result (URI to use for later on).
                             "Select Picture"), SELECT_PICTURE);
+                }else if(item == 0){
+                    Log.v("2 Accessed permissions?", "Yes, and allowed.");
+                    Intent takePictureIntent = new Intent();
+                    takePictureIntent.setAction(MediaStore.ACTION_IMAGE_CAPTURE);
+                    startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE); //Begins the camera activity for a result (picture to immediately analyze).
+
+
                 }
 
             }
@@ -137,16 +157,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {    //Called when the activity is started for the result and receives the picture selection (or not).
-        if (resultCode == RESULT_OK) {
-            if (requestCode == SELECT_PICTURE) {
-                    uploadImage(data.getData());//Puts the path of the URI, from the data, into selectedImageUri to transfer it below into a string.
-//                Intent toAnalysisActivity = new Intent(MainActivity.this, AnalysisActivity.class);
-//                toAnalysisActivity.putExtra("image", selectedImagePath);
-//                startActivity(toAnalysisActivity);
-//                Toast.makeText(MainActivity.this, "Time To Analyze!", Toast.LENGTH_SHORT).show();
+            if (requestCode == SELECT_PICTURE && resultCode == RESULT_OK) {
+                uploadImage(data.getData());//Puts the path of the URI, from the data, into selectedImageUri to transfer it below into a string.
             }
-        }
-    }
+            if(requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK){
+                Bundle extras = data.getExtras();
+                Bitmap unscaledBitmap = (Bitmap)extras.get("data");
+                Bitmap scaledImageBitmap = scaleBitmapDown(unscaledBitmap,1200);
+                mMainImage.setImageBitmap(scaledImageBitmap);
+                try {
+                    callCloudVision(scaledImageBitmap);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+            }
 
     public String getPath(Uri uri) {
         // Safety check for the path reception.
@@ -209,18 +235,18 @@ public class MainActivity extends AppCompatActivity {
                     batchAnnotateImagesRequest.setRequests(new ArrayList<AnnotateImageRequest>() {{
                         AnnotateImageRequest annotateImageRequest = new AnnotateImageRequest();
 
-                        // Adds the image
+                        // Adds the image grabbed to a byte array.
                         Image base64EncodedImage = new Image();
                         // Convert the bitmap to a JPEG, just in case it's in a format that Android understands but not Cloud Vision.
                         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
                         bitmap.compress(Bitmap.CompressFormat.JPEG, 90, byteArrayOutputStream);
                         byte[] imageBytes = byteArrayOutputStream.toByteArray();
 
-                        // Base64 encode the JPEG
+                        // Base64 encodeing the JPEG
                         base64EncodedImage.encodeContent(imageBytes);
                         annotateImageRequest.setImage(base64EncodedImage);
 
-                        // add the features we want
+                        // Adds the features based on the type of detection called, and adds the results.
                         annotateImageRequest.setFeatures(new ArrayList<Feature>() {{
                             Feature labelDetection = new Feature();
                             labelDetection.setType("LABEL_DETECTION");
@@ -290,6 +316,12 @@ public class MainActivity extends AppCompatActivity {
 
         return message;
     }
+
+    public String getRandom (String[] array){
+        int random = new Random().nextInt(array.length);
+        return array[random];
+    }
+
 
 }
 
