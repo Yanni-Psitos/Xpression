@@ -63,10 +63,11 @@ public class MainActivity extends AppCompatActivity {
 
     private TextView mLoadingImage;
     private ImageView mMainImage;
+    private TextView mListOfItemsToPresentToTheUser; //TODO: Remember that the user needs a list of items to find in the first place.
 
     private int points = 0;
-    private ArrayList<String> scavList;
-    private String[] randomScavList= {"n/a","n/a","n/a","n/a","n/a","n/a","n/a","n/a","n/a","n/a"};
+    private String[] randomScavList = {"n/a","n/a","n/a","n/a","n/a","n/a","n/a","n/a","n/a",};
+    private String[] preScavList= {"toilet", "coffee cup", "hair", "t-shirt", "hand", "pc game", "bottle"};
 
 
 
@@ -76,8 +77,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        scavList.add(new String{"toilet", "coffee cup", "hair", "t-shirt", "hand", "pc game", "bottle"};
-        getRandom(scavList);
+        for (int i=0;i<6;i++) {                   //Cycles the random list possibilities and fills an array with unique ones to present to the user.
+            String currentWord = getRandom(preScavList);
+            if (!getAtIndex(randomScavList, i).contains(getRandom(preScavList))) {
+                randomScavList[i] = currentWord;
+            }
+        }
 
 
         mLoadingImage = (TextView)findViewById(R.id.loadingTv);
@@ -320,6 +325,10 @@ public class MainActivity extends AppCompatActivity {
     public String getRandom (String[] array){
         int random = new Random().nextInt(array.length);
         return array[random];
+    }
+
+    public String getAtIndex(String[] arrayOfStrings, int index){
+        return arrayOfStrings[index];
     }
 
 
