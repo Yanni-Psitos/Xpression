@@ -42,6 +42,17 @@
         android:layout_gravity="center_horizontal"
         android:paddingTop="120dp"
         android:textSize="20dp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/usersList"
+        android:text="20dp"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/pointsTv"
+        android:text="20dp"/>
 
 </LinearLayout>
 

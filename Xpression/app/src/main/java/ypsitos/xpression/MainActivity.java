@@ -61,9 +61,10 @@ public class MainActivity extends AppCompatActivity {
     private static final String CLOUD_VISION_API_KEY = "AIzaSyDLSL3CV9iHsMqHmKXb391xLK7E0rHQLEo";
     public static final String FILE_NAME = "temporary.jpg";
 
-    private TextView mLoadingImage;
+    private TextView mLoadingText;
     private ImageView mMainImage;
     private TextView mListOfItemsToPresentToTheUser; //TODO: Remember that the user needs a list of items to find in the first place.
+    private TextView mPoints;
 
     private int points = 0;
     private String[] randomScavList = {"n/a","n/a","n/a","n/a","n/a","n/a","n/a","n/a","n/a",};
@@ -77,17 +78,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        for (int i=0;i<6;i++) {                   //Cycles the random list possibilities and fills an array with unique ones to present to the user.
-            String currentWord = getRandom(preScavList);
-            if (!getAtIndex(randomScavList, i).contains(getRandom(preScavList))) {
-                randomScavList[i] = currentWord;
-            }
-        }
 
-
-        mLoadingImage = (TextView)findViewById(R.id.loadingTv);
+        mListOfItemsToPresentToTheUser = (TextView) findViewById(R.id.usersList);
+        mLoadingText = (TextView) findViewById(R.id.loadingTv);
         mMainImage = (ImageView) findViewById(R.id.ivImage);
-
+        mPoints = (TextView) findViewById(R.id.pointsTv);
 
         mSelectButton = (Button) findViewById(R.id.btnSelectPhoto);
         mSelectButton.setOnClickListener(new View.OnClickListener() {
@@ -98,7 +93,17 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
+        for (int i = 0; i < 6; i++) {                   //Cycles the random list possibilities and fills an array with unique ones to present to the user.
+            String currentWord = getRandom(preScavList);
+            if (!getAtIndex(randomScavList, i).contains(getRandom(preScavList))) {
+                randomScavList[i] = currentWord;
+                mLoadingText.setText(randomScavList.toString());
+            }
+        }
     }
+
+
+
 
     public void selectImage() { //Method that encapsulates the image selection process within a dialog click.
         final CharSequence[] items = {"Take Photo", "Choose From Library", "Cancel"}; //Dialog item names.
@@ -220,7 +225,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void callCloudVision(final Bitmap bitmap) throws IOException {
         // Switches text to loading.
-        mLoadingImage.setText(R.string.loading_message);
+        mLoadingText.setText(R.string.loading_message);
 
         // Does the real work in an async task, because the network is needed for use.
         new AsyncTask<Object, Void, String>() {
@@ -282,7 +287,13 @@ public class MainActivity extends AppCompatActivity {
             }
 
             protected void onPostExecute(String result) {
-                mLoadingImage.setText(result);
+                mLoadingText.setText(result);
+                for(int i=0;i<6;i++){
+                    if(result.contains(randomScavList[i])){
+                        points++;
+                        mPoints.setText(points + " :Points");
+                    }
+                }
             }
         }.execute();
     }
@@ -321,6 +332,8 @@ public class MainActivity extends AppCompatActivity {
 
         return message;
     }
+
+
 
     public String getRandom (String[] array){
         int random = new Random().nextInt(array.length);
