@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
 
     private TextView mLoadingText;
     private ImageView mMainImage;
-    private TextView mListOfItemsToPresentToTheUser; //TODO: Remember that the user needs a list of items to find in the first place.
+    private TextView mListOfItemsToPresentToTheUser; //TODO: Present a list to the user, remove an item that's found, store a number of points that is
     private TextView mPoints;
 
     private int points = 0;
@@ -295,7 +295,7 @@ public class MainActivity extends AppCompatActivity {
                 for(int i=0;i<6;i++){
                     if(result.contains(randomScavList[i])){
                         points++;
-                        mPoints.setText(points + " :Points");
+                        mLoadingText.setText(points + " :Points"); //Todo: Make sure the points are in the proper place and not in the loadingtext widget/tv.
                     }
                 }
             }
@@ -347,9 +347,4 @@ public class MainActivity extends AppCompatActivity {
     public String getAtIndex(String[] arrayOfStrings, int index){
         return arrayOfStrings[index];
     }
-
-
 }
-
-
-    //TODO: Use AsyncTask or thread pools in order to handle loading of BOTH GCV AND HPE Sentiment Analysis(and the animation for such).
