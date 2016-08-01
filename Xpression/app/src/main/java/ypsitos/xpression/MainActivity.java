@@ -93,13 +93,17 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
+        int counter = 0;
         for (int i = 0; i < 6; i++) {                   //Cycles the random list possibilities and fills an array with unique ones to present to the user.
             String currentWord = getRandom(preScavList);
-            if (!getAtIndex(randomScavList, i).contains(getRandom(preScavList))) {
+            if (!getAtIndex(randomScavList, counter).contains(currentWord) && !getAtIndex(randomScavList, counter+1).contains(currentWord) && !getAtIndex(randomScavList, counter+2).contains(currentWord) &&!getAtIndex(randomScavList, counter+3).contains(currentWord) &&!getAtIndex(randomScavList, counter+4).contains(currentWord) &&!getAtIndex(randomScavList, counter+5).contains(currentWord) &&!getAtIndex(randomScavList, counter+6).contains(currentWord)) {
                 randomScavList[i] = currentWord;
-                mLoadingText.setText(randomScavList.toString());
+            }
+            else{
+                i--;
             }
         }
+        mLoadingText.setText(randomScavList[0].toString()+" "+randomScavList[1].toString()+" "+randomScavList[2].toString()+" "+randomScavList[3].toString()+" "+randomScavList[4].toString()+" "+randomScavList[5].toString());
     }
 
 
