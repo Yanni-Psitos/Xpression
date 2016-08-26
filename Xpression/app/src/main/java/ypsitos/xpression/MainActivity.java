@@ -10,6 +10,7 @@ import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Point;
 import android.net.Uri;
 import android.nfc.Tag;
 import android.os.AsyncTask;
@@ -19,7 +20,9 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -50,6 +53,10 @@ import java.util.List;
 import java.io.ByteArrayOutputStream;
 import java.util.Random;
 
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView;
+import uk.co.deanwild.materialshowcaseview.ShowcaseConfig;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -78,7 +85,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         mListOfItemsToPresentToTheUser = (TextView) findViewById(R.id.usersList);
         mLoadingText = (TextView) findViewById(R.id.loadingTv);
         mMainImage = (ImageView) findViewById(R.id.ivImage);
@@ -104,6 +110,32 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         mLoadingText.setText(randomScavList[0].toString()+" "+randomScavList[1].toString()+" "+randomScavList[2].toString()+" "+randomScavList[3].toString()+" "+randomScavList[4].toString()+" "+randomScavList[5].toString());
+
+        new MaterialShowcaseView.Builder(this)
+                .setTarget(mLoadingText)
+                .setDismissText("WOAH IT FUCKING WORKED")
+                .setContentText("These are some amazing things for sure")
+                .setDelay(100) // optional but starting animations immediately in onCreate can make them choppy
+                .singleUse("showcase_id") // provide a unique ID used to ensure it is only shown once
+                .show();
+
+        ShowcaseConfig config = new ShowcaseConfig();
+        config.setDelay(500); // half second between each showcase view
+
+        MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(this, "showcase_id");
+
+        sequence.setConfig(config);
+
+        sequence.addSequenceItem(mLoadingText,
+                "First", "GOT IT");
+
+        sequence.addSequenceItem(mLoadingText,
+                "Second", "GOT IT");
+
+        sequence.addSequenceItem(mLoadingText,
+                "Third", "GOT IT");
+
+        sequence.start();
     }
 
 
@@ -347,4 +379,5 @@ public class MainActivity extends AppCompatActivity {
     public String getAtIndex(String[] arrayOfStrings, int index){
         return arrayOfStrings[index];
     }
+
 }

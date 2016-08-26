@@ -49,7 +49,7 @@
             android:id="@+id/pointsTv"
             android:layout_alignParentBottom="true"
             android:textColor="#000000"
-            android:text=")))"
+            android:text=""
             android:textSize="30dp"
             android:layout_centerVertical="true" />
 
