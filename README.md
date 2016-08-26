@@ -1,2 +1,2 @@
-# Xpression
-Sentiment analysis for text messages. See what your friends truly meant, no more guessing!
+# Xpression/"iFind"
+Scavenger hunt game to be implemented both locally (vs CPU) and eventually versus friends.
